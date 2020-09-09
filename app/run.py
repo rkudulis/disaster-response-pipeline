@@ -2,16 +2,24 @@ import json
 import plotly
 import pandas as pd
 
+import logging
+
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
+
 # from sklearn.externals import joblib
 import joblib
 from sqlalchemy import create_engine
 
+# TODO: Change accuracy metrics
+from sklearn.metrics import f1_score
+import numpy as np
+
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 
@@ -36,7 +44,7 @@ def tokenize(text):
     return clean_tokens
 
 # load data
-engine = create_engine('sqlite:///../data/sql_database.db')
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('cleaned_data', engine)
 
 # load model
@@ -53,6 +61,8 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    print(genre_names)
+    
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -60,7 +70,7 @@ def index():
             'data': [
                 Bar(
                     x=genre_names,
-                    y=genre_counts
+                    y=genre_counts.values
                 )
             ],
 

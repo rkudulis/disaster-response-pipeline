@@ -63,13 +63,13 @@ def build_model():
         {
             'clf__estimator': [RandomForestClassifier()],
             'clf__estimator__n_estimators': [1],
-#             'clf__estimator__max_depth': [1, 5],
-#             'clf__estimator__class_weight': [None, 'balanced']
+            'clf__estimator__max_depth': [1, 5],
+            'clf__estimator__class_weight': [None, 'balanced']
         },
-#         {
-#             'clf__estimator': [AdaBoostClassifier()],
-#             'clf__estimator__n_estimators': [10, 20],
-#         }
+        {
+            'clf__estimator': [AdaBoostClassifier()],
+            'clf__estimator__n_estimators': [10, 20],
+        }
 
     ]
 
