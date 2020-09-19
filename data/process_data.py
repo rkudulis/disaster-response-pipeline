@@ -4,6 +4,13 @@ from sqlalchemy import create_engine
 
 
 def process_data(file_1, file_2, database):
+    """
+    This function merges the messages and categories datasets, splits the categories
+    column into separate, clearly named columns, converts values to binary,
+    and drops duplicates.
+    """
+
+
     # load messages dataset
     messages = pd.read_csv(file_1)
     # load messages dataset
@@ -39,5 +46,10 @@ def process_data(file_1, file_2, database):
 
     
 if __name__ == "__main__":
+    """
+    The script takes the file paths of the two datasets and database, cleans the
+    datasets, and stores the clean data into a SQLite database in the specified
+    database file path.
+    """
     file_1, file_2, database = sys.argv[1:]  # get filename of dataset
     process_data(file_1, file_2, database)   # run ETL

@@ -12,7 +12,6 @@ from nltk import word_tokenize
 from nltk.corpus import stopwords
 
 nltk.download('punkt')
-nltk.download('stopwords')
 nltk.download('wordnet')
 
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -25,6 +24,9 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
 
 def load_data(database_filepath):
+    """
+    Load messages from database
+    """
     engine = create_engine(f'sqlite:///{database_filepath}')
     df = pd.read_sql("SELECT * FROM cleaned_data", engine)
     X = df['message']
@@ -34,6 +36,10 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    """
+    Custom tokenizer.
+    Remove stopwords and punctuations. Finally Lemmatize each word.
+    """
     stop_words = stopwords.words('english')
     # normalize case and remove punctuation
     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
@@ -44,6 +50,10 @@ def tokenize(text):
     return tokens
 
 def custom_f1_score(y_true, y_pred):
+    """
+    Custom f1_score for multiclass classiffier
+    Returns mean of all f1_scores of each category
+    """
     if isinstance(y_true, pd.DataFrame):
         y_true = y_true.values
     diffs = []
@@ -53,6 +63,9 @@ def custom_f1_score(y_true, y_pred):
     return np.mean(diffs)
 
 def build_model():
+    """
+    Build Pipeline and find the best hyper-parameters
+    """
     pipeline = Pipeline([
         ('tokenizer', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
@@ -81,6 +94,9 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Evaluate the model and print PRECISION, RECALL, F1_SCORE of each category
+    """
     y_pred = pd.DataFrame(model.predict(X_test), columns=Y_test.columns, index=X_test.index)
     results_fmt = "{:<22} Precision: {:.3f}   Recall: {:.3f}   F1-score: {:.3f}"
     for col in Y_test.columns:
@@ -92,11 +108,17 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    """
+    Save the final model to pickle file
+    """
     with open(model_filepath, 'wb') as file:
         pickle.dump(model, file)
 
 
 def main():
+    """
+    Build the best model for the cleaned dataset
+    """
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))

@@ -61,7 +61,7 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
-    print(genre_names)
+    response_counts = df.iloc[:, 4:].sum().sort_values(0, True).reset_index()
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -81,6 +81,27 @@ def index():
                 },
                 'xaxis': {
                     'title': "Genre"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    y=response_counts.iloc[:,0],
+                    x=response_counts.iloc[:,1],
+                    orientation='h'
+                )
+            ],
+            'layout': {
+                'title': "Distribution of Responses",
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Response"
+                },
+                'margin': {
+                    'l':200, 'r':20, 't':30, 'b':30
                 }
             }
         }
